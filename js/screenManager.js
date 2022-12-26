@@ -22,6 +22,10 @@ var renderers = [];
             renderers.push(renderer);
         
             var canvas = renderer.domElement;
+            
+            //changes canvas resolution
+            canvas.setAttribute("width", "500%");
+            canvas.setAttribute("height", "500%");
         
             canvasArray.push(canvas);
 
