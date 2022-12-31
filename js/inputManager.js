@@ -2,11 +2,19 @@ var mouseUp = true, mouse = new THREE.Vector2();
 var clickPosition = new THREE.Vector2();
 var draggedVector = new THREE.Vector2();
 
-export function getMousePosition(event, canvas)
+export function getMousePosition(event, canvas, isMouse)
 {
-    mouse.x = ( event.offsetX / canvas.clientWidth) * 2 - 1;
-    mouse.y = - ( event.offsetY / canvas.clientHeight) * 2 + 1;
+    if(isMouse)
+    {
+        mouse.x = ( event.offsetX / canvas.clientWidth) * 2 - 1;
+        mouse.y = - ( event.offsetY / canvas.clientHeight) * 2 + 1;
+    }
+    else
+    {
+        mouse.x = (event.x / canvas.clientWidth) * 2 - 1;
+        mouse.y = - ( event.y / canvas.clientHeight) * 2 + 1;
 
+    }
     return mouse;
 }
 
@@ -51,11 +59,11 @@ export function screenToCameraSpace(mouse, cameraIndex)
 
 }
 
-export function onMouseDown(event, canvas)
+export function onMouseDown(event, canvas, isMouse)
 {
     mouseUp = false;
 
-    mouse = getMousePosition(event, canvas);
+    mouse = getMousePosition(event, canvas, isMouse);
 
     clickPosition.x = mouse.x;
     clickPosition.y = mouse.y;
@@ -63,12 +71,12 @@ export function onMouseDown(event, canvas)
     return mouse;
 }
 
-export function onMouseMove(event, canvas)
+export function onMouseMove(event, canvas, isMouse)
 {
 
     if (mouseUp) { return; }
     
-    mouse = getMousePosition(event, canvas);
+    mouse = getMousePosition(event, canvas, isMouse);
 
     draggedVector.x = mouse.x - clickPosition.x;
     draggedVector.y = mouse.y - clickPosition.y;

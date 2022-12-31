@@ -5,8 +5,7 @@ import * as inputManager from './inputManager.js';
 import * as raycaster from './raycastManager.js';
 import * as objectManager from './objectManager.js';
 
-var pressedObject, mouseDown = false;
-const ongoingTouches = [];
+var pressedObject;
 init();
 
 function init()
@@ -24,9 +23,6 @@ function init()
     sceneManager.createLighting();
 
     animate();
-
-
-    //startInputListener();
 
     window.onresize = function() {
         onWindowResize();
@@ -46,13 +42,16 @@ function animate()
 
 function startInputListener()
 {
-    console.log("start input listener");
-
     const el = document.getElementById("overlay");
+
+    var mousePos = new THREE.Vector2();
+
 
     el.addEventListener("touchstart", function(ev) {
         ev.preventDefault();
-        onMouseDown(ev, screenManager.getFullScreenCanvas());
+        mousePos.x = ev.touches[0].clientX;
+        mousePos.y = ev.touches[0].clientY;
+        onMouseDown(mousePos, screenManager.getFullScreenCanvas(), false);
       }, {
         passive: false
       });
@@ -60,7 +59,9 @@ function startInputListener()
 
       el.addEventListener("touchmove", function(ev) {
         ev.preventDefault();
-        onMouseMove(ev, screenManager.getFullScreenCanvas());
+        mousePos.x = ev.touches[0].clientX;
+        mousePos.y = ev.touches[0].clientY;
+        onMouseMove(mousePos, screenManager.getFullScreenCanvas(), false);
       }, {
         passive: false
       });
@@ -72,43 +73,16 @@ function startInputListener()
         passive: false
       });
 
-    //window.ontouchstart = function(event) {
-    //    console.log("touch start");
-    //};
-    //window.ontouchmove = function(event) {
-    //    console.log("touch move");
-    //};
-    //window.ontouchend = function(event) {
-    //    event.preventDefault();
-    //    console.log("touch end");
-    //};
-
-
-
-    //document.getElementById("overlay").onmousedown = function(event){onMouseDown(event, screenManager.getFullScreenCanvas())};
-    
-    //window.ontouchstart = function(event){onMouseDown(event, screenManager.getFullScreenCanvas())};
-
-    //document.getElementById("overlay").onmousemove = function(event){onMouseMove(event, screenManager.getFullScreenCanvas())};
-    //window.ontouchmove = function(event){onMouseMove(event, screenManager.getFullScreenCanvas())};
-
-
-    //document.onmouseup = function(event){onMouseUp(event)};
-    //window.ontouchend = function(event){onMouseUp(event)};
+    el.onmousedown = function(event){onMouseDown(event, screenManager.getFullScreenCanvas(), true)};
+    el.onmousemove = function(event){onMouseMove(event, screenManager.getFullScreenCanvas(), true)};
+    el.onmouseup = function(event){onMouseUp(event)};
 }
 
-function onMouseDown(event, fullScreenCanvas)
+function onMouseDown(event, fullScreenCanvas, isMouse)
 {
-    //document.getElementById("overlay").setPointerCapture(event.pointerId);
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    mouseDown = true;
-
     console.log("mouse down");
 
-    var mouse = inputManager.onMouseDown(event, fullScreenCanvas);
+    var mouse = inputManager.onMouseDown(event, fullScreenCanvas, isMouse);
 
     var cameraIndex = cameraManager.getCameraIndexFromMouse(mouse);
 
@@ -120,10 +94,6 @@ function onMouseDown(event, fullScreenCanvas)
 
 function onMouseMove(event, fullScreenCanvas)
 {
-    event.preventDefault();
-    if(!mouseDown)
-        return;
-
     var draggedVector = inputManager.onMouseMove(event, fullScreenCanvas);
 
     console.log("moving");
@@ -134,12 +104,8 @@ function onMouseMove(event, fullScreenCanvas)
     }
 
 }
-function onMouseUp(event)
+function onMouseUp()
 {
-    event.preventDefault();
-    console.log(event.touch)
-
-    mouseDown = false;
     console.log("mouse up");
     
     objectManager.stopRotating();
@@ -152,20 +118,3 @@ function onWindowResize()
     screenManager.onWindowResize();
     cameraManager.onWindowResize(screenManager.getCanvasArray());
 }
-
-function copyTouch({ identifier, pageX, pageY }) {
-    return { identifier, pageX, pageY };
-  }
-  
-
-function ongoingTouchIndexById(idToFind) {
-    for (let i = 0; i < ongoingTouches.length; i++) {
-      const id = ongoingTouches[i].identifier;
-  
-      if (id === idToFind) {
-        return i;
-      }
-    }
-    return -1;    // not found
-  }
-  
