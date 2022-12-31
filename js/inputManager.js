@@ -54,7 +54,6 @@ export function screenToCameraSpace(mouse, cameraIndex)
 export function onMouseDown(event, canvas)
 {
     mouseUp = false;
-    event.preventDefault();
 
     mouse = getMousePosition(event, canvas);
 
@@ -66,6 +65,7 @@ export function onMouseDown(event, canvas)
 
 export function onMouseMove(event, canvas)
 {
+
     if (mouseUp) { return; }
     
     mouse = getMousePosition(event, canvas);
